@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clinical Counterfactuals</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Predict In-Hospital Mortality and Generate Counterfactuals</h1>
+
+    <form action="/predict" method="post">
+        <h2>Patient Data</h2>
+        <div class="form-grid">
+            {% for feature in features %}
+            <div class="form-group">
+                <label for="{{ feature }}">{{ feature }}</label>
+                <input type="number" step="any" name="{{ feature }}" required>
+            </div>
+            {% endfor %}
+        </div>
+        <button type="submit">Predict</button>
+    </form>
+
+    {% if prediction is not none %}
+    <h2>Prediction</h2>
+    <p>In-Hospital Death: {% if prediction == 1 %}Yes{% else %}No{% endif %}</p>
+    <p>Probability of In-Hospital Death: {{ probability }}</p>
+    {% endif %}
+
+    {% if counterfactuals is not none %}
+    <h2>Counterfactuals</h2>
+    <p>Here are some counterfactuals that would change the prediction:</p>
+    <div class="table-container">
+        {{ counterfactuals.to_html(classes='counterfactual-table') | safe }}
+    </div>
+    {% endif %}
+
+</body>
+</html>
